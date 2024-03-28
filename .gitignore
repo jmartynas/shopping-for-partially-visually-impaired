@@ -19,8 +19,28 @@
 
 # Go workspace file
 go.work
+go.mod
+go.sum
 
 # environment files
 secrets.txt
 flake.lock
 flake.nix
+android/
+build/
+.dart_tool/
+.idea/
+ios/
+linux/
+macos/
+test/
+web/
+windows/
+pubspec.yaml
+pubspec.lock
+.gitignore
+flutter_ui.iml
+.flutter-plugins-dependencies
+.flutter-plugins
+flutter_01.log
+analysis_options.yaml

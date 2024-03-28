@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 
-class shopList extends StatelessWidget {
+import 'package:camera/camera.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_ui/scanner.dart';
+
+class ShopList extends StatelessWidget {
   final Dio _dio = Dio();
+  ShopList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,18 +16,18 @@ class shopList extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Shop List'),
+          title: const Text('Shop List'),
           centerTitle: true,
           actions: <Widget>[
             PopupMenuButton(
               itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                PopupMenuItem(
-                  child: Text('Button 1'),
+                const PopupMenuItem(
                   value: 'button1',
+                  child: Text('Button 1'),
                 ),
-                PopupMenuItem(
-                  child: Text('Button 2'),
+                const PopupMenuItem(
                   value: 'button2',
+                  child: Text('Button 2'),
                 ),
               ],
               onSelected: (value) {
@@ -36,7 +40,7 @@ class shopList extends StatelessWidget {
           future: _dio.get('http://127.0.0.1:8080/shop_list'),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             } else if (snapshot.hasError) {
@@ -91,8 +95,12 @@ class shopList extends StatelessWidget {
   return Expanded(
     child: GestureDetector(
       onTap: () {
+      	cameraInit() async{
+        	cameras = await availableCameras(); // Initialize cameras
+	}
+	cameraInit();
         // Handle tap event, for example navigate to another page
-        // Navigator.push(context, MaterialPageRoute(builder: (context) => NextPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const MainApp()));
         print("Shop ${data['name']} clicked");
       },
       child: Column(
@@ -113,7 +121,7 @@ class shopList extends StatelessWidget {
               ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
@@ -121,7 +129,7 @@ class shopList extends StatelessWidget {
                   if (imageData.isNotEmpty) {
                     return Image.memory(imageData, fit: BoxFit.cover);
                   } else {
-                    return FlutterLogo(); // Fallback if image not available
+                    return const FlutterLogo(); // Fallback if image not available
                   }
                 }
               },

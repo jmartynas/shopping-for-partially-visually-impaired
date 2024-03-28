@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ui/shopList.dart';
+import 'package:flutter_ui/ShopList.dart';
 
 Future<void> main() async {
-  runApp(shopList());
+  WidgetsFlutterBinding.ensureInitialized(); // Ensure widgets are initialized
+  runApp(ShopList());
 }
-

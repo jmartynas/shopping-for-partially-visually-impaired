@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_ui/scanner.dart';
 
 class ShopList extends StatelessWidget {
@@ -16,10 +17,31 @@ class ShopList extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Shop List'),
+          automaticallyImplyLeading: false, // Removes the back button in the app bar
+	  title: Container(
+	    padding: const EdgeInsets.all(8.0),
+	    decoration: BoxDecoration(
+	      color: Colors.black,
+	      borderRadius: BorderRadius.circular(45),
+	      border: Border.all(
+	        color: Colors.black,
+		width: 2,
+	      ),
+	    ),
+	    child: const Text('Parduotuvės',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24, // Keičiamas teksto dydis
+		fontWeight: FontWeight.bold,
+              ),
+	    ),
+	  ),
           centerTitle: true,
           actions: <Widget>[
             PopupMenuButton(
+	      icon: const Icon(Icons.menu,
+	        color: Colors.black, size: 48
+	      ),
               itemBuilder: (BuildContext context) => <PopupMenuEntry>[
                 const PopupMenuItem(
                   value: 'button1',
@@ -110,16 +132,12 @@ class ShopList extends StatelessWidget {
             width: halfScreenWidth,
             height: halfScreenWidth,
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(10),
-            ),
             child: FutureBuilder<Response>(
               future: _dio.get(
                 'http://127.0.0.1:8080/get_image?image=${data['image']}',
                 options: Options(responseType: ResponseType.bytes), // Specify response type
               ),
-              builder: (context, snapshot) {
+  	      builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
@@ -127,7 +145,23 @@ class ShopList extends StatelessWidget {
                 } else {
                   final Uint8List imageData = snapshot.data!.data;
                   if (imageData.isNotEmpty) {
-                    return Image.memory(imageData, fit: BoxFit.cover);
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(15), // Adjust the radius as needed
+                      child: Container(
+		        decoration: BoxDecoration(
+		          borderRadius: BorderRadius.circular(20),
+	                  color: Colors.white,
+			  border: Border.all(
+			    color: Colors.grey,
+			    width: 2,
+			  ),
+		        ),
+		        child: Image.memory(
+                          imageData,
+                          fit: BoxFit.cover,
+                        ),
+		      ),
+                    );
                   } else {
                     return const FlutterLogo(); // Fallback if image not available
                   }
@@ -135,7 +169,12 @@ class ShopList extends StatelessWidget {
               },
             ),
           ),
-          Text("${data['name']}"),
+          Text("${data['name']}",
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 24, // Keičiamas teksto dydis
+                ),
+	  ),
         ],
       ),
     ),

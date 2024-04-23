@@ -8,14 +8,13 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
 )
 
 var store = sessions.NewCookieStore([]byte("asdfghjk"))
-
-var session *sessions.Session
 
 type PageVariables struct {
 	Title        string
@@ -47,7 +46,6 @@ type User struct {
 }*/
 
 func HomePage(w http.ResponseWriter, r *http.Request) {
-
 	pageVariables := PageVariables{
 		Title: "Prisijungimas",
 	}
@@ -135,7 +133,6 @@ func renderLoginPage(w http.ResponseWriter, pageVariables PageVariables) {
 	
 
 		`)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -146,36 +143,26 @@ func renderLoginPage(w http.ResponseWriter, pageVariables PageVariables) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
+
 func getUserByEmail(email string) *User {
-	username := "admin"
-	password := "admin"
-	host := "127.0.0.1"
-	port := "3306"
-	dbName := "pvp_admin"
+	username := os.Getenv("DBUSER")
+	password := os.Getenv("DBPASS")
+	dburl := os.Getenv("DBURL")
+	dbtable := os.Getenv("DBTABLE")
 
-	// Create the Data Source Name (DSN) string
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, dbName)
+	constr := fmt.Sprintf(
+		"%s:%s@tcp(%s)/%s?allowNativePasswords=true&tls=true",
+		username,
+		password,
+		dburl,
+		dbtable,
+	)
 
-	// Open a connection to the MySQL database
-	db, err := sql.Open("mysql", dsn)
+	db, err := sql.Open("mysql", constr)
 	if err != nil {
-		log.Fatalf("Error opening database connection: %v", err)
+		log.Fatal(err)
 	}
 	defer db.Close()
-
-	// Ping the database to check if the connection is successful
-	err = db.Ping()
-	if err != nil {
-		log.Fatalf("Error connecting to database: %v", err)
-	}
-
-	fmt.Println("Connected to MySQL database!")
-
-	// Ping the database to check if the connection is successful
-	err = db.Ping()
-	if err != nil {
-		log.Fatalf("Error connecting to database: %v", err)
-	}
 
 	var user User
 	rows, err := db.Query("SELECT * FROM paskyra WHERE elpastas = ?", email)
@@ -196,13 +183,11 @@ func getUserByEmail(email string) *User {
 	}
 
 	return &user
-
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-	fmt.Println("Įvestas el. paštas:", email)
 
 	user := getUserByEmail(email)
 	if user == nil {

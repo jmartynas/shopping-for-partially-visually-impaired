@@ -5,7 +5,6 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	//"fmt"
 )
 
 //cia jei noretume susikurti daugiau useriu admin tai kad tinkamus duomenis i db irasyti per sita galim uzsifroti su atitinkamasi parametrais
@@ -14,8 +13,6 @@ import (
 	druska := "asdf124!£!" // Jūsų pasirinkta druska
 
 	hashedPassword := sukurtiHash(slaptazodis, druska)
-	fmt.Print("asd")
-	fmt.Println("Hashed password:", hashedPassword)
 }*/
 
 func sukurtiHash(slaptazodis, druska string) string {

@@ -1,43 +1,46 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
+# If you prefer the allow list template instead of the deny list, see community template:
+# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
+#
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
+# Test binary, built with `go test -c`
+*.test
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+go.mod
+go.sum
+
+# environment files
+secrets.txt
+flake.lock
+flake.nix
+android/
+build/
 .dart_tool/
-.flutter-plugins
+.idea/
+ios/
+linux/
+macos/
+test/
+web/
+windows/
+pubspec.yaml
+pubspec.lock
+.gitignore
+flutter_ui.iml
 .flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+.flutter-plugins
+flutter_01.log
+analysis_options.yaml

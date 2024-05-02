@@ -3,7 +3,7 @@
   "sql": [{
     "schema": "my_backup.sql",
     "queries": "query.sql",
-    "engine": "postgresql",
+    "engine": "mysql",
     "gen": {
       "go": {
         "out": "naudotojai"

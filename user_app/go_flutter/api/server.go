@@ -23,5 +23,6 @@ func (s *Server) Start() error {
 	ServerInfo = s
 	http.HandleFunc("/shop_list", MakeHTTPHandler(GetShops))
 	http.HandleFunc("/get_image", MakeHTTPHandler(GetImage))
+	http.HandleFunc("/get_product", MakeHTTPHandler(Information))
 	return http.ListenAndServe(s.listenAddr, nil)
 }

@@ -148,7 +148,7 @@ func getUserByEmail(email string) *User {
 	username := os.Getenv("DBUSER")
 	password := os.Getenv("DBPASS")
 	dburl := os.Getenv("DBURL")
-	dbtable := os.Getenv("DBTABLE")
+	dbtable := os.Getenv("DBTABLE1")
 
 	constr := fmt.Sprintf(
 		"%s:%s@tcp(%s)/%s?allowNativePasswords=true&tls=true",
@@ -165,7 +165,7 @@ func getUserByEmail(email string) *User {
 	defer db.Close()
 
 	var user User
-	rows, err := db.Query("SELECT * FROM paskyra WHERE elpastas = ?", email)
+	rows, err := db.Query("SELECT * FROM paskyra WHERE epastas = ?", email)
 	if err != nil {
 		panic(err.Error())
 	}

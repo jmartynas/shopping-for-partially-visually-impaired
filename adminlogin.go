@@ -191,7 +191,6 @@ func getUserByEmail(email string) *User {
 func Login(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-	fmt.Println("Įvestas el. paštas:", email)
 
 	user := getUserByEmail(email)
 	if user == nil {

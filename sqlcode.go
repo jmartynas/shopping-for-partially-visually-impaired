@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -605,24 +606,53 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	id := r.FormValue("id")
-	// Gauname formos laukų duomenis
-	// produktoID := r.FormValue("produkto_id")
 	produktoBruksninisKodas := r.FormValue("produktas_bruksninis_kodas")
 	produktoPavadinimas := r.FormValue("produktas_pavadinimas")
-	produktoKaina := r.FormValue("produktas_kaina")
+	produktoKainaStr := r.FormValue("produktas_kaina")
 	produktoKategorija := r.FormValue("produktas_kategorija")
 	produktoSudetis := r.FormValue("produktas_sudetis")
 	produktoMaistingumas := r.FormValue("produktas_maistingumas")
 	produktoPagaminimoData := r.FormValue("produktas_pagaminimo_data")
 	produktoGaliojimoPabaigosData := r.FormValue("produktas_galiojimo_pabaigos_data")
-	gamintojasID := r.FormValue("gamintojo_id")
-	gamintojasPavadinimas := r.FormValue("gamintojo_pavadinimas")
-	gamintojasKilmesSalis := r.FormValue("gamintojo_kilmes_salis")
-	parduotuvesID := r.FormValue("parduotuves_id")
-	parduotuvesPavadinimas := r.FormValue("parduotuves_pavadinimas")
-	parduotuvesAdresas := r.FormValue("parduotuves_adresas")
+	gamintojasPavadinimas := r.FormValue("gamintojas_pavadinimas")
+	gamintojasKilmesSalis := r.FormValue("gamintojas_kilmes_salis")
+	parduotuvesPavadinimas := r.FormValue("parduotuve_pavadinimas")
+	//parduotuvesAdresas := r.FormValue("parduotuve_adresas")
 
-	// Atnaujiname produktą
+	// Convert produktoKaina to float64
+	var produktoKaina float64
+	if produktoKainaStr != "" {
+		produktoKaina, err = strconv.ParseFloat(produktoKainaStr, 64)
+		if err != nil {
+			http.Error(w, "Invalid produkto_kaina", http.StatusBadRequest)
+			return
+		}
+	}
+
+	// Convert id to int
+	var productID int
+	if id != "" {
+		productID, err = strconv.Atoi(id)
+		if err != nil {
+			http.Error(w, "Invalid id", http.StatusBadRequest)
+			return
+		}
+	}
+
+	// Prepare and execute the query to get the foreign keys
+	idQuery := `
+		SELECT fk_gamintojas_id, fk_parduotuve_id
+		FROM produktas
+		WHERE id = ?
+	`
+	var parduotuvesID, gamintojasID int
+	err = db.QueryRow(idQuery, productID).Scan(&gamintojasID, &parduotuvesID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Update the product
 	produktoQuery := `
 		UPDATE produktas 
 		SET 
@@ -636,7 +666,6 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 			galiojimo_pabaigos_data = ?
 		WHERE id = ?
 	`
-
 	_, err = db.Exec(produktoQuery,
 		produktoBruksninisKodas,
 		produktoPavadinimas,
@@ -646,13 +675,13 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 		produktoMaistingumas,
 		produktoPagaminimoData,
 		produktoGaliojimoPabaigosData,
-		id)
+		productID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Atnaujiname gamintoją
+	// Update the manufacturer
 	gamintojoQuery := `
 		UPDATE gamintojas 
 		SET 
@@ -660,7 +689,6 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 			kilmes_salis = ?
 		WHERE id = ?
 	`
-
 	_, err = db.Exec(gamintojoQuery,
 		gamintojasPavadinimas,
 		gamintojasKilmesSalis,
@@ -670,18 +698,15 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Atnaujiname parduotuvę
+	// Update the store
 	parduotuvesQuery := `
 		UPDATE parduotuve 
 		SET 
-			pavadinimas = ?, 
-			adresas = ?
+			pavadinimas = ?
 		WHERE id = ?
 	`
-
 	_, err = db.Exec(parduotuvesQuery,
 		parduotuvesPavadinimas,
-		parduotuvesAdresas,
 		parduotuvesID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

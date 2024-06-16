@@ -88,7 +88,7 @@ func admindata(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("DBUSER")
 	password := os.Getenv("DBPASS")
 	dburl := os.Getenv("DBURL")
-	dbtable := os.Getenv("DBTABLE")
+	dbtable := os.Getenv("DBTABLE1")
 
 	constr := fmt.Sprintf(
 		"%s:%s@tcp(%s)/%s?allowNativePasswords=true&tls=true",
@@ -120,7 +120,7 @@ func admindata(w http.ResponseWriter, r *http.Request) {
 	naudotojasQuery := `
 		UPDATE paskyra 
 		SET  
-		 	elpastas=?, 
+		 	epastas=?, 
 			pilnas_vardas = ?, 
 			slaptazodis = ?
 		WHERE id = ?
